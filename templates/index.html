@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Therapist: Your Personal Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #e6f2f2;
+            --text-primary: #2c3e50;
+            --accent-color: #4a90e2;
+            --user-message-bg: #d1f2e3;
+            --ai-message-bg: #e6f3ff;
+            --button-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Particle Background Animation */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ai-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--button-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            max-width: 800px;
+            width: 95%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            max-height: 500px;
+        }
+
+        .message {
+            max-width: 80%;
+            margin: 0.5rem 0;
+            padding: 0.75rem;
+            border-radius: 15px;
+            clear: both;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .user-message {
+            background-color: var(--user-message-bg);
+            align-self: flex-end;
+            float: right;
+        }
+
+        .ai-message {
+            background-color: var(--ai-message-bg);
+            align-self: flex-start;
+            float: left;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            background: var(--button-gradient);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Additional Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: rgba(255,255,255,0.8);
+            padding: 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .header-title {
+                font-size: 1.8rem;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-title">
+            <div class="ai-icon">AI</div>
+            AI Therapist: Your Personal Companion
+        </div>
+    </header>
+
+    <!-- Chat Container -->
+    <main class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be dynamically added here -->
+            <div class="message ai-message">
+                Hi there! I'm your AI companion. How are you feeling today?
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" id="clearChatBtn">Clear Chat</button>
+            <button class="action-btn" id="feelBetterBtn">Feel Better</button>
+            <button class="action-btn" id="getAdviceBtn">Get Advice</button>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+            <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div>
+            <a href="#" class="footer-link">Privacy Policy</a> | 
+            <a href="#" class="footer-link">Terms of Service</a> | 
+            <a href="#" class="footer-link">Contact Us</a>
+        </div>
+        <div class="social-icons">
+            <a href="#" class="social-icon">🐦</a>
+            <a href="#" class="social-icon">📘</a>
+            <a href="#" class="social-icon">📸</a>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Particles.js Configuration
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#4a90e2' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#4a90e2', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'repulse' } },
+            }
+        });
+
+        // Chat Functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const clearChatBtn = document.getElementById('clearChatBtn');
+        const feelBetterBtn = document.getElementById('feelBetterBtn');
+        const getAdviceBtn = document.getElementById('getAdviceBtn');
+
+        // Display Message Function
+        function displayMessage(message, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'ai' ? 'ai-message' : 'user-message');
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            
+            // Auto-scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send Message Function
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (messageText) {
+                // Display User Message
+                displayMessage(messageText, 'user');
+
+                // Send to Backend
+                fetch("http://127.0.0.1:5000/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ "message": messageText })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display AI Response
+                    displayMessage(data.message, 'ai');
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    // Fallback error message
+                    displayMessage("I'm having trouble processing your message right now. Please try again.", 'ai');
+                });
+
+                // Clear input
+                chatInput.value = '';
+            }
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        clearChatBtn.addEventListener('click', () => {
+            chatMessages.innerHTML = `
+                <div class="message ai-message">
+                    Hi there! I'm your AI companion. How are you feeling today?
+                </div>
+            `;
+        });
+
+        feelBetterBtn.addEventListener('click', () => {
+            const supportMessage = document.createElement('div');
+            supportMessage.classList.add('message', 'ai-message');
+            supportMessage.textContent = "Remember, you're strong, and it's okay to have difficult feelings. I'm here to support you.";
+            chatMessages.appendChild(supportMessage);
+        });
+
+        getAdviceBtn.addEventListener('click', () => {
+            const adviceMessage = document.createElement('div');
+            adviceMessage.classList.add('message', 'ai-message');
+            adviceMessage.textContent = "Would you like to talk about self-care strategies or explore what's on your mind?";
+            chatMessages.appendChild(adviceMessage);
+        });
+    </script>
+</body>
+</html>
